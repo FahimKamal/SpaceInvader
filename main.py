@@ -1,3 +1,8 @@
+"""
+Space Invader
+Created by: Fahim kamal
+Date: 17.01.2020
+"""
 import pygame
 
 # Initialize the pygame
@@ -17,6 +22,7 @@ screen.fill((0, 0, 0))
 player_img = pygame.image.load('spaceship.png')
 player_x = 350
 player_y = 500
+player_x_change = 0
 
 def player():
     """place the player at a specific location"""
@@ -43,16 +49,18 @@ while game_running:
             # if left arrow is pressed
             if event.key == pygame.K_LEFT:
                 print('Left key is pressed')
+                player_x_change += -0.5
 
             # if right arrow is pressed
             if event.key == pygame.K_RIGHT:
                 print('Right key is pressed')
+                player_x_change += 0.5
 
         # Check if any key is released after pressing
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 print('keystroke is released')
-
-    player_x += 0.1
+                player_x_change = 0
+    player_x += player_x_change
     player()
     pygame.display.update()
