@@ -32,9 +32,27 @@ while game_running:
     # Iterate through all events in pygame
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            # If I press crose button on window the game closes
+            # If I press cross button on window the game closes
             game_running = False
-    # Player movement
+
+        # Player movement
+        # Check if any key is pressed or not
+        if event.type == pygame.KEYDOWN:
+            print('a key is pressed')
+
+            # if left arrow is pressed
+            if event.key == pygame.K_LEFT:
+                print('Left key is pressed')
+
+            # if right arrow is pressed
+            if event.key == pygame.K_RIGHT:
+                print('Right key is pressed')
+
+        # Check if any key is released after pressing
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                print('keystroke is released')
+
     player_x += 0.1
     player()
     pygame.display.update()
