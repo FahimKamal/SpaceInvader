@@ -4,8 +4,8 @@ Created by: Fahim kamal
 Date: 17.01.2020
 """
 import random
-
 import pygame
+from math import sqrt
 
 # Initialize the pygame
 pygame.init()
@@ -46,13 +46,22 @@ def player():
     """place the player at a specific location"""
     screen.blit(player_img, (player_x, player_y))
 
+
 def enemy():
     """place the enemy at a specific location"""
     screen.blit(enemy_img, (enemy_x, enemy_y))
 
+
 def fire():
     global bullet_state
     screen.blit(bullet_img, (bullet_x + 16, bullet_y + 10))
+
+
+def is_collision(enemy_x, enemy_y, bullet_x, bullet_y):
+    distance = sqrt(((enemy_x - bullet_x) ** 2) + ((enemy_y - bullet_y) ** 2))
+    if distance < 27:
+        return True
+    return False
 
 
 game_running = True
@@ -124,8 +133,16 @@ while game_running:
     if bullet_state == 'fire':
         bullet_y -= bullet_y_change
         fire()
-    
+
     # border check for bullet
     if bullet_y < 0:
         bullet_state = 'ready'
+
+    # Enemy and bullet collision check
+    if is_collision(enemy_x, enemy_y, bullet_x, bullet_y):
+        # Bullet will be ready to fire again
+        bullet_state = 'ready'
+        # Enemy will goto a random location
+        enemy_x = random.randint(0, 736)
+        enemy_y = random.randint(50, 150)
     pygame.display.update()
