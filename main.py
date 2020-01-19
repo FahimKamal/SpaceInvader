@@ -43,7 +43,7 @@ enemy_x_change = [0.3 for _ in range(enemy_number)]
 # Set the bullet
 bullet_img = pygame.image.load('bullet.png')
 bullet_x = 0
-bullet_y = 500
+bullet_y = 0
 bullet_y_change = 0.7
 bullet_state = 'ready'
 
@@ -52,6 +52,13 @@ score = 0
 font = pygame.font.Font('freesansbold.ttf', 32)
 font_x = 10
 font_y = 10
+
+# Game over text
+game_over_font = pygame.font.Font('freesansbold.ttf', 64)
+
+def game_over_text():
+    text = game_over_font.render('GAME OVER', True, (255, 255, 255))
+    screen.blit(text, (200, 250))
 
 def show_score():
     text = font.render(f'Score: {score}', True, (255, 255, 255))
@@ -140,6 +147,14 @@ while game_running:
 
     # Border check for enemy
     for i in range(enemy_number):
+        # Game over
+        if enemy_y[i] > 440:
+            # Remove all enemy from screen
+            for j in range(enemy_number):
+                enemy_y[j] = 2000
+            game_over_text()
+            break
+
         if enemy_x[i] <= 0:
             enemy_x_change[i] *= -1
             enemy_y[i] += 36
@@ -154,6 +169,7 @@ while game_running:
         if is_collision(enemy_x[i], enemy_y[i], bullet_x, bullet_y):
             # Bullet will be ready to fire again
             bullet_state = 'ready'
+            bullet_y = 0
             # Enemy will goto a random location
             enemy_x[i] = random.randint(0, 736)
             enemy_y[i] = random.randint(50, 150)
