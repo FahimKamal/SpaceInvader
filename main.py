@@ -6,6 +6,7 @@ Date: 17.01.2020
 import random
 import pygame
 from math import sqrt
+from pygame import mixer
 
 # Initialize the pygame
 pygame.init()
@@ -21,6 +22,10 @@ pygame.display.set_icon(icon)
 screen.fill((0, 0, 0))
 # Background image
 background = pygame.image.load('gamebg.gif')
+
+# Background sound
+mixer.music.load('background.wav')
+mixer.music.play(-1)  # Because of -1 the sound will play in loop
 
 # Set the player
 player_img = pygame.image.load('spaceship.png')
@@ -44,6 +49,13 @@ bullet_state = 'ready'
 
 # score
 score = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+font_x = 10
+font_y = 10
+
+def show_score():
+    text = font.render(f'Score: {score}', True, (255, 255, 255))
+    screen.blit(text, (font_x, font_y))
 
 def player():
     """place the player at a specific location"""
@@ -103,6 +115,10 @@ while game_running:
                     bullet_x = player_x
                     bullet_state = 'fire'
 
+                    # play sound
+                    bullet_sound = mixer.Sound('laser.wav')
+                    bullet_sound.play()
+
         # Check if any key is released after pressing
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -142,6 +158,9 @@ while game_running:
             enemy_x[i] = random.randint(0, 736)
             enemy_y[i] = random.randint(50, 150)
             score += 1
+
+            explosion_sound = mixer.Sound('explosion.wav')
+            explosion_sound.play()
             print(score)
 
     if bullet_state == 'fire':
@@ -151,5 +170,5 @@ while game_running:
     # border check for bullet
     if bullet_y < 0:
         bullet_state = 'ready'
-
+    show_score()
     pygame.display.update()
