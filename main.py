@@ -28,11 +28,12 @@ player_x = 350
 player_y = 500
 player_x_change = 0
 
-# Set the Enemy
-enemy_img = pygame.image.load('enemy.png')
-enemy_x = random.randint(0, 736)
-enemy_y = random.randint(50, 150)
-enemy_x_change = 0.3
+# Set the Enemies
+enemy_number = 6
+enemy_img = [pygame.image.load('enemy.png') for _ in range(enemy_number)]
+enemy_x = [random.randint(0, 736) for _ in range(enemy_number)]
+enemy_y = [random.randint(50, 150) for _ in range(enemy_number)]
+enemy_x_change = [0.3 for _ in range(enemy_number)]
 
 # Set the bullet
 bullet_img = pygame.image.load('bullet.png')
@@ -41,15 +42,17 @@ bullet_y = 500
 bullet_y_change = 0.7
 bullet_state = 'ready'
 
+# score
+score = 0
 
 def player():
     """place the player at a specific location"""
     screen.blit(player_img, (player_x, player_y))
 
 
-def enemy():
+def enemy(i):
     """place the enemy at a specific location"""
-    screen.blit(enemy_img, (enemy_x, enemy_y))
+    screen.blit(enemy_img[i], (enemy_x[i], enemy_y[i]))
 
 
 def fire():
@@ -120,15 +123,26 @@ while game_running:
     player()
 
     # Border check for enemy
-    if enemy_x <= 0:
-        enemy_x_change *= -1
-        enemy_y += 36
-    elif enemy_x > 736:
-        enemy_x_change *= -1
-        enemy_y += 36
+    for i in range(enemy_number):
+        if enemy_x[i] <= 0:
+            enemy_x_change[i] *= -1
+            enemy_y[i] += 36
+        elif enemy_x[i] > 736:
+            enemy_x_change[i] *= -1
+            enemy_y[i] += 36
 
-    enemy_x += enemy_x_change
-    enemy()
+        enemy_x[i] += enemy_x_change[i]
+        enemy(i)
+
+        # Enemy and bullet collision check
+        if is_collision(enemy_x[i], enemy_y[i], bullet_x, bullet_y):
+            # Bullet will be ready to fire again
+            bullet_state = 'ready'
+            # Enemy will goto a random location
+            enemy_x[i] = random.randint(0, 736)
+            enemy_y[i] = random.randint(50, 150)
+            score += 1
+            print(score)
 
     if bullet_state == 'fire':
         bullet_y -= bullet_y_change
@@ -138,11 +152,4 @@ while game_running:
     if bullet_y < 0:
         bullet_state = 'ready'
 
-    # Enemy and bullet collision check
-    if is_collision(enemy_x, enemy_y, bullet_x, bullet_y):
-        # Bullet will be ready to fire again
-        bullet_state = 'ready'
-        # Enemy will goto a random location
-        enemy_x = random.randint(0, 736)
-        enemy_y = random.randint(50, 150)
     pygame.display.update()
